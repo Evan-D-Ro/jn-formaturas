@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
-import heroImage from "@/assets/hero-graduation.jpg";
+import heroImage from "@/assets/hero-graduation.webp";
 import logo from "@/assets/logo-jn-formaturas.png"
 
 const Hero = () => {
@@ -19,7 +19,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${heroImage})` }} />
 
 
-      <div className="container mx-auto px-4 relative z-10 text-center animate-fade-in">
+      <div className="container mx-auto px-4 pb-4 relative z-10 text-center animate-fade-in">
         <div className="flex w-full justify-center align-center py-6">
           <img
             src={logo}

@@ -12,7 +12,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0B2C65] text-white py-10 relative overflow-hidden">
+    <footer className="bg-[#0B2C65] text-white py-10 relative overflow-hidden md:pr-4 md:pl-4">
       {/* Background overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#081B3A] via-transparent to-transparent opacity-95" />
 

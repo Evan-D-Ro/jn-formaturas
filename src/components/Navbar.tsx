@@ -81,13 +81,17 @@ const Navbar = () => {
             {/* Logo2 visível na Home */}
             <div
               onClick={() => scrollToSection("home")}
-              className="cursor-pointer flex items-center justify-center transition-all duration-500 relative"
+              className={`cursor-pointer flex items-center justify-start 
+                  ${activeSection === "home"
+                  ? "ml-5"
+                  : ""}
+              transition-all duration-500 relative`}
             >
-              {/* Texto visível enquanto estiver na Home (hero) */}
+
               <span
-                className={`whitespace-nowrap text-lg md:text-xl font-extrabold tracking-wide transition-all duration-500 absolute flex items-center gap-1
+                className={`whitespace-nowrap text-lg md:text-xl font-extrabold tracking-wide transition-all duration-500 absolute inset-x-0 text-center flex justify-center items-center gap-1
     ${activeSection === "home"
-                    ? "opacity-100 scale-100 translate-y-0 text-white drop-shadow-md ml-8 md:ml-0"
+                    ? "opacity-100 scale-100 translate-y-0 text-white drop-shadow-md"
                     : "opacity-0 scale-90 -translate-y-2 pointer-events-none"
                   }`}
               >
@@ -110,6 +114,7 @@ const Navbar = () => {
                   : "opacity-0 scale-90 translate-y-2 pointer-events-none"
                   }`}
               />
+
             </div>
 
 
@@ -117,7 +122,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden md:flex [@media(max-width:1100px)]:hidden items-center gap-8">
             {menuItems.map((item) => (
               <button
                 key={item.id}
@@ -152,7 +157,7 @@ const Navbar = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-white"
+            className="[@media(min-width:1100px)]:hidden text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Menu"
             aria-expanded={isMenuOpen}
@@ -163,7 +168,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-white/20 animate-fade-in">
+          <div className="[@media(min-width:1100px)]:hidden py-4 border-t border-white/20 animate-fade-in">
             {menuItems.map((item) => (
               <button
                 key={item.id}
@@ -192,7 +197,7 @@ const Navbar = () => {
           </div>
         )}
       </div>
-    </nav>
+    </nav >
   );
 };
 

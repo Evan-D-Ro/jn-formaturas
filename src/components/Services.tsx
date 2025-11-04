@@ -1,9 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Package, MessageCircle } from "lucide-react";
-import albumDetailImage from "@/assets/album-detail.jpg";
-import customerServiceImage from "@/assets/customer-service.jpg";
-import deliveryServiceImage from "@/assets/delivery-service.jpg";
+import albumDetailImage from "@/assets/album-detail.webp";
+import customerServiceImage from "@/assets/customer-service.webp";
+import deliveryServiceImage from "@/assets/delivery-service.webp";
 import whatsapp from "@/assets/whatsapp.webp";
 
 const Services = () => {
@@ -39,7 +39,7 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="pt-12 pb-12 bg-[#F9FAFB] relative text-center">
+    <section id="services" className="pt-12 pb-12 bg-[#F9FAFB] relative text-center md:pr-4 md:pl-4">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">

@@ -61,7 +61,7 @@ const Contact = () => {
     return !Object.values(newErrors).some((e) => e !== "");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -73,41 +73,41 @@ const Contact = () => {
       return;
     }
 
-    const { name, email, phone, message } = formData;
+    try {
+      const response = await fetch("/enviar.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as any),
+      });
 
-    // Mensagem formatada simples e compatível com WhatsApp (sem emojis corrompidos)
-    const whatsappMessage = `
-Olá, sou ${name}!
+      const result = await response.json();
 
-Gostaria de mais informações sobre os álbuns de formatura.
-
-E-mail: ${email}
-Telefone: ${phone}
-Mensagem: ${message}
-    `.trim();
-
-    // Evita erro de codificação de emoji
-    const encodedMessage = encodeURIComponent(whatsappMessage)
-      .replace(/%EF%B8%8F/g, "") // remove variações de emoji quebradas
-      .replace(/%F0%9F%91%8B/g, "%F0%9F%91%8B"); // 👋 fix manual opcional
-
-    const whatsappNumber = "554499243080";
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-
-    window.open(whatsappUrl, "_blank");
-
-    toast({
-      title: "Redirecionando para o WhatsApp...",
-      description: "Sua mensagem está sendo aberta no WhatsApp.",
-    });
-
-    setFormData({ name: "", email: "", phone: "", message: "" });
+      if (result.status === "success") {
+        toast({
+          title: "Mensagem enviada!",
+          description: "Recebemos seu contato e retornaremos em breve.",
+        });
+        setFormData({ name: "", email: "", phone: "", message: "" });
+      } else {
+        toast({
+          title: "Erro ao enviar mensagem",
+          description: result.message || "Tente novamente mais tarde.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erro de conexão",
+        description: "Não foi possível enviar o formulário.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <section
       id="contact"
-      className="pt-12 pb-20 bg-gradient-to-br from-primary via-primary/95 to-secondary text-white relative overflow-hidden"
+      className="pt-12 pb-20 bg-gradient-to-br from-primary via-primary/95 to-secondary text-white relative overflow-hidden md:pr-4 pl-4"
     >
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16 animate-fade-in">
@@ -151,8 +151,8 @@ Mensagem: ${message}
                         value={formData.name}
                         onChange={handleChange}
                         className={`rounded-xl border ${errors.name
-                            ? "border-red-500 focus:ring-red-400"
-                            : "border-white/20 focus:ring-[#EB3F5B]"
+                          ? "border-red-500 focus:ring-red-400"
+                          : "border-white/20 focus:ring-[#EB3F5B]"
                           } bg-white/10 text-white placeholder:text-white/50 focus:ring-2`}
                         placeholder="Seu nome completo"
                       />
@@ -171,8 +171,8 @@ Mensagem: ${message}
                         value={formData.email}
                         onChange={handleChange}
                         className={`rounded-xl border ${errors.email
-                            ? "border-red-500 focus:ring-red-400"
-                            : "border-white/20 focus:ring-[#EB3F5B]"
+                          ? "border-red-500 focus:ring-red-400"
+                          : "border-white/20 focus:ring-[#EB3F5B]"
                           } bg-white/10 text-white placeholder:text-white/50 focus:ring-2`}
                         placeholder="seu@email.com"
                       />
@@ -196,8 +196,8 @@ Mensagem: ${message}
                             name="phone"
                             type="tel"
                             className={`rounded-xl border ${errors.phone
-                                ? "border-red-500 focus:ring-red-400"
-                                : "border-white/20 focus:ring-[#EB3F5B]"
+                              ? "border-red-500 focus:ring-red-400"
+                              : "border-white/20 focus:ring-[#EB3F5B]"
                               } bg-white/10 text-white placeholder:text-white/50 focus:ring-2`}
                             placeholder="(11) 99999-9999"
                           />
@@ -217,8 +217,8 @@ Mensagem: ${message}
                         value={formData.message}
                         onChange={handleChange}
                         className={`rounded-xl border ${errors.message
-                            ? "border-red-500 focus:ring-red-400"
-                            : "border-white/20 focus:ring-[#EB3F5B]"
+                          ? "border-red-500 focus:ring-red-400"
+                          : "border-white/20 focus:ring-[#EB3F5B]"
                           } bg-white/10 text-white placeholder:text-white/50 focus:ring-2 min-h-32`}
                         placeholder="Como podemos ajudar?"
                       />

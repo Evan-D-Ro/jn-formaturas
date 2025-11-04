@@ -11,7 +11,7 @@ const MVV = () => {
   ];
 
   return (
-    <section id="mvv" className="pt-12 pb-20 bg-gradient-to-br from-primary via-primary/95 to-secondary">
+    <section id="mvv" className="pt-12 pb-20 bg-gradient-to-br from-primary via-primary/95 to-secondary md:pr-4 md:pl-4">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">

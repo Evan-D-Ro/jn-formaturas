@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
-import albumDetailImage from "@/assets/album-detail.jpg";
+import albumDetailImage from "@/assets/album-detail.webp";
 import { GraduationCap } from "lucide-react";
 
 const Quality = () => {
@@ -14,7 +14,7 @@ const Quality = () => {
   ];
 
   return (
-    <section id="quality" className="pt-12 bg-[#F9FAFB] relative text-center">
+    <section id="quality" className="pt-12 bg-[#F9FAFB] relative text-center md:pr-4 md:pl-4">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">

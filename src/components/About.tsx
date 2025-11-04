@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
-import teamWorkImage from "@/assets/team-work.jpg";
+import teamWorkImage from "@/assets/team-work.webp";
 
 const About = () => {
   return (
-    <section id="about" className="pt-12 pb-20 bg-[#F9FAFB] relative text-center">
+    <section id="about" className="pt-12 pb-20 bg-[#F9FAFB] relative text-center md:pr-4 md:pl-4">
       <div className="container mx-auto px-4 relative z-10">
         {/* Título centralizado */}
         <div className="mb-12 animate-fade-in">
