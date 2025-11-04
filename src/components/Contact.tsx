@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import InputMask from "react-input-mask";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
   const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,24 +19,96 @@ const Contact = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Mensagem enviada!",
-      description: "Entraremos em contato em breve. Obrigado!",
-    });
-    setFormData({ name: "", email: "", phone: "", message: "" });
-  };
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    };
+
+    if (!formData.name.trim() || formData.name.trim().length < 3) {
+      newErrors.name = "Informe seu nome completo.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Digite um e-mail válido.";
+    }
+
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (phoneDigits.length < 11) {
+      newErrors.phone = "Digite um telefone válido com DDD.";
+    }
+
+    if (formData.message.trim().length < 5) {
+      newErrors.message = "A mensagem deve ter pelo menos 5 caracteres.";
+    }
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((e) => e !== "");
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      toast({
+        title: "Formulário inválido",
+        description: "Verifique os campos destacados e tente novamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { name, email, phone, message } = formData;
+
+    // Mensagem formatada simples e compatível com WhatsApp (sem emojis corrompidos)
+    const whatsappMessage = `
+Olá, sou ${name}!
+
+Gostaria de mais informações sobre os álbuns de formatura.
+
+E-mail: ${email}
+Telefone: ${phone}
+Mensagem: ${message}
+    `.trim();
+
+    // Evita erro de codificação de emoji
+    const encodedMessage = encodeURIComponent(whatsappMessage)
+      .replace(/%EF%B8%8F/g, "") // remove variações de emoji quebradas
+      .replace(/%F0%9F%91%8B/g, "%F0%9F%91%8B"); // 👋 fix manual opcional
+
+    const whatsappNumber = "554499243080";
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+    window.open(whatsappUrl, "_blank");
+
+    toast({
+      title: "Redirecionando para o WhatsApp...",
+      description: "Sua mensagem está sendo aberta no WhatsApp.",
+    });
+
+    setFormData({ name: "", email: "", phone: "", message: "" });
   };
 
   return (
-    <section id="contact" className="pt-12 pb-20 bg-gradient-to-br from-primary via-primary/95 to-secondary text-white relative overflow-hidden">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 " />
-
+    <section
+      id="contact"
+      className="pt-12 pb-20 bg-gradient-to-br from-primary via-primary/95 to-secondary text-white relative overflow-hidden"
+    >
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-[#FFD447] mb-4">
@@ -41,24 +116,33 @@ const Contact = () => {
           </h2>
           <div className="w-24 h-1 bg-[#EB3F5B] mx-auto rounded-full mb-6" />
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-            Fale com a <span className="font-semibold text-[#FFD447]">JN Formaturas </span>
+            Fale com a{" "}
+            <span className="font-semibold text-[#FFD447]">JN Formaturas </span>
             e saiba mais sobre nossos álbuns e condições especiais.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-stretch">
-          {/* Formulário de contato */}
+          {/* FORMULÁRIO */}
           <div className="flex">
             <Card className="flex flex-col justify-between w-full border-none shadow-2xl rounded-3xl bg-white/10 backdrop-blur-sm text-white animate-fade-in">
               <CardHeader>
-                <CardTitle className="text-3xl text-[#FFD447]">Envie sua mensagem</CardTitle>
+                <CardTitle className="text-3xl text-[#FFD447]">
+                  Envie sua mensagem
+                </CardTitle>
                 <CardDescription className="text-base text-white/80">
-                  Preencha o formulário abaixo e nossa equipe entrará em contato.
+                  Preencha o formulário abaixo e fale conosco pelo WhatsApp.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
-                <form onSubmit={handleSubmit} className="space-y-6 h-full flex flex-col justify-between">
+                <form
+                  onSubmit={handleSubmit}
+                  ref={formRef}
+                  noValidate
+                  className="space-y-6 h-full flex flex-col justify-between"
+                >
                   <div className="space-y-6">
+                    {/* Nome */}
                     <div className="space-y-2">
                       <Label htmlFor="name">Nome</Label>
                       <Input
@@ -66,11 +150,18 @@ const Contact = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        required
-                        className="rounded-xl border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:ring-2 focus:ring-[#EB3F5B]"
+                        className={`rounded-xl border ${errors.name
+                            ? "border-red-500 focus:ring-red-400"
+                            : "border-white/20 focus:ring-[#EB3F5B]"
+                          } bg-white/10 text-white placeholder:text-white/50 focus:ring-2`}
                         placeholder="Seu nome completo"
                       />
+                      {errors.name && (
+                        <p className="text-red-400 text-sm">{errors.name}</p>
+                      )}
                     </div>
+
+                    {/* E-mail */}
                     <div className="space-y-2">
                       <Label htmlFor="email">E-mail</Label>
                       <Input
@@ -79,24 +170,45 @@ const Contact = () => {
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
-                        required
-                        className="rounded-xl border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:ring-2 focus:ring-[#EB3F5B]"
+                        className={`rounded-xl border ${errors.email
+                            ? "border-red-500 focus:ring-red-400"
+                            : "border-white/20 focus:ring-[#EB3F5B]"
+                          } bg-white/10 text-white placeholder:text-white/50 focus:ring-2`}
                         placeholder="seu@email.com"
                       />
+                      {errors.email && (
+                        <p className="text-red-400 text-sm">{errors.email}</p>
+                      )}
                     </div>
+
+                    {/* Telefone */}
                     <div className="space-y-2">
                       <Label htmlFor="phone">Telefone</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
+                      <InputMask
+                        mask="(99) 99999-9999"
                         value={formData.phone}
                         onChange={handleChange}
-                        required
-                        className="rounded-xl border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:ring-2 focus:ring-[#EB3F5B]"
-                        placeholder="(11) 99999-9999"
-                      />
+                      >
+                        {(inputProps: any) => (
+                          <Input
+                            {...inputProps}
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            className={`rounded-xl border ${errors.phone
+                                ? "border-red-500 focus:ring-red-400"
+                                : "border-white/20 focus:ring-[#EB3F5B]"
+                              } bg-white/10 text-white placeholder:text-white/50 focus:ring-2`}
+                            placeholder="(11) 99999-9999"
+                          />
+                        )}
+                      </InputMask>
+                      {errors.phone && (
+                        <p className="text-red-400 text-sm">{errors.phone}</p>
+                      )}
                     </div>
+
+                    {/* Mensagem */}
                     <div className="space-y-2">
                       <Label htmlFor="message">Mensagem</Label>
                       <Textarea
@@ -104,12 +216,18 @@ const Contact = () => {
                         name="message"
                         value={formData.message}
                         onChange={handleChange}
-                        required
-                        className="rounded-xl border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:ring-2 focus:ring-[#EB3F5B] min-h-32"
+                        className={`rounded-xl border ${errors.message
+                            ? "border-red-500 focus:ring-red-400"
+                            : "border-white/20 focus:ring-[#EB3F5B]"
+                          } bg-white/10 text-white placeholder:text-white/50 focus:ring-2 min-h-32`}
                         placeholder="Como podemos ajudar?"
                       />
+                      {errors.message && (
+                        <p className="text-red-400 text-sm">{errors.message}</p>
+                      )}
                     </div>
                   </div>
+
                   <div className="align-center justify-center flex">
                     <Button
                       type="submit"
@@ -117,7 +235,7 @@ const Contact = () => {
                       className="w-max bg-[#EB3F5B] hover:bg-[#d5344f] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02]"
                     >
                       <Send className="mr-2 h-5 w-5" />
-                      Enviar Mensagem
+                      Enviar via WhatsApp
                     </Button>
                   </div>
                 </form>
@@ -125,7 +243,7 @@ const Contact = () => {
             </Card>
           </div>
 
-          {/* Cards da direita (endereço + mapa) */}
+          {/* INFORMAÇÕES */}
           <div className="flex flex-col justify-between h-full space-y-6">
             <Card className="border-none shadow-2xl rounded-3xl bg-[#EB3F5B] text-white flex-grow">
               <CardContent className="h-full p-8 space-y-6 justify-between flex flex-col">
@@ -136,7 +254,8 @@ const Contact = () => {
                   <div>
                     <h3 className="font-bold text-xl mb-2">Endereço</h3>
                     <p className="leading-relaxed">
-                      Rua Sertanópolis, 465 – Centro<br />
+                      Rua Sertanópolis, 465 – Centro
+                      <br />
                       Santa Fé/PR – CEP 86770-000
                     </p>
                   </div>
@@ -162,7 +281,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-xl mb-2">E-mail</h3>
-                    <p className="leading-relaxed">contato@jnformaturas.com.br</p>
+                    <p className="leading-relaxed">
+                      contato@jnformaturas.com.br
+                    </p>
                   </div>
                 </div>
               </CardContent>

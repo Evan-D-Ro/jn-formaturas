@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo-jn-formaturas.png";
+import logo2 from "@/assets/logo2.png";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,12 +38,22 @@ const Navbar = () => {
   // Scroll suave
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
+    const navbarHeight = 100; // altura aproximada da navbar (ajuste se necessário)
+
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+
       setIsMenuOpen(false);
       setActiveSection(id);
     }
   };
+
 
   const menuItems = [
     { label: "Home", id: "home" },
@@ -55,20 +66,55 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled || isMenuOpen
         ? "bg-[#0B2C65]/95 shadow-lg backdrop-blur-md"
         : "bg-transparent"
         }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <img
-            src={logo}
-            alt="JN Formaturas - Álbuns de Formatura"
-            className="h-14 w-auto cursor-pointer transition-transform hover:scale-105"
+        <div className="flex items-center justify-between h-28 relative">
+          {/* Texto ou Logo dinâmico */}
+          <div
             onClick={() => scrollToSection("home")}
-          />
+            className="cursor-pointer flex items-center justify-center transition-all duration-500 relative"
+          >
+            {/* Logo2 visível na Home */}
+            <div
+              onClick={() => scrollToSection("home")}
+              className="cursor-pointer flex items-center justify-center transition-all duration-500 relative"
+            >
+              {/* Texto visível enquanto estiver na Home (hero) */}
+              <span
+                className={`whitespace-nowrap text-lg md:text-xl font-extrabold tracking-wide transition-all duration-500 absolute flex items-center gap-1
+    ${activeSection === "home"
+                    ? "opacity-100 scale-100 translate-y-0 text-white drop-shadow-md ml-8 md:ml-0"
+                    : "opacity-0 scale-90 -translate-y-2 pointer-events-none"
+                  }`}
+              >
+                <span className="text-white [text-shadow:_1px_1px_0_#FFD447] inline-block">
+                  JN
+                </span>
+                <span className="relative text-white font-semibold inline-block align-middle">
+                  <span className="relative z-10">Formaturas</span>
+                  <span className="absolute inset-x-0 bottom-0 h-1 bg-[#EB3F5B] -z-0 rounded-sm"></span>
+                </span>
+              </span>
+
+
+              {/* Logo principal visível fora da Home */}
+              <img
+                src={logo}
+                alt="JN Formaturas - Álbuns de Formatura"
+                className={`h-28 md:h-28 py-2 w-auto object-contain transition-all duration-700 ${activeSection !== "home"
+                  ? "opacity-100 scale-100 translate-y-0"
+                  : "opacity-0 scale-90 translate-y-2 pointer-events-none"
+                  }`}
+              />
+            </div>
+
+
+
+          </div>
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-8">

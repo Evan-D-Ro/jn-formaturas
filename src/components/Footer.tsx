@@ -23,7 +23,7 @@ const Footer = () => {
             <img
               src={logo}
               alt="JN Formaturas Logo"
-              className="h-24 w-auto mb-4 transition-transform hover:scale-105"
+              className="h-32 w-auto mb-2 transition-transform hover:scale-105"
             />
             <p className="text-sm leading-relaxed text-white/90">
               <strong>Razão Social: JN Formaturas Ltda.</strong>

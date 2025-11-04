@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import heroImage from "@/assets/hero-graduation.jpg";
+import logo from "@/assets/logo-jn-formaturas.png"
 
 const Hero = () => {
   const handleWhatsAppClick = () => {
@@ -17,13 +18,21 @@ const Hero = () => {
     >
       <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${heroImage})` }} />
 
+
       <div className="container mx-auto px-4 relative z-10 text-center animate-fade-in">
+        <div className="flex w-full justify-center align-center py-6">
+          <img
+            src={logo}
+            alt="JN Formaturas Logo"
+            className="h-48 w-auto transition-transform hover:scale-105"
+          />
+        </div>
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
           Transformando <span className="text-[#FFD447]">memórias</span> em{" "}
           <span className="text-[#EB3F5B]">lembranças</span> que duram para sempre
         </h1>
 
-        <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-white/90 mb-6 max-w-2xl mx-auto">
           A <strong>JN Formaturas</strong> eterniza momentos únicos com emoção, qualidade e um toque de brilho em cada detalhe.
         </p>
 
