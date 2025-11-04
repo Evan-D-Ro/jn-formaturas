@@ -64,6 +64,19 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const lastExecution = localStorage.getItem("lastFormSubmit");
+    const now = Date.now();
+
+    // Se o último envio foi há menos de 60 segundos, bloqueia
+    if (lastExecution && now - parseInt(lastExecution) < 60 * 1000) {
+      toast({
+        title: "Aguarde um momento",
+        description: "Você pode enviar novamente após 1 minuto.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!validateForm()) {
       toast({
         title: "Formulário inválido",
@@ -83,6 +96,9 @@ const Contact = () => {
       const result = await response.json();
 
       if (result.status === "success") {
+        // salva o timestamp do envio
+        localStorage.setItem("lastFormSubmit", now.toString());
+
         toast({
           title: "Mensagem enviada!",
           description: "Recebemos seu contato e retornaremos em breve.",
@@ -103,6 +119,7 @@ const Contact = () => {
       });
     }
   };
+
 
   return (
     <section
@@ -235,7 +252,7 @@ const Contact = () => {
                       className="w-max bg-[#EB3F5B] hover:bg-[#d5344f] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02]"
                     >
                       <Send className="mr-2 h-5 w-5" />
-                      Enviar via WhatsApp
+                      Enviar Mensagem
                     </Button>
                   </div>
                 </form>
